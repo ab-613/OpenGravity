@@ -68,4 +68,10 @@ Licensed under **GPL-3.0**. See the LICENSE file for details on commercial use a
 
 ## ⭐ Star History
 
-[![Star History Chart](https://api.star-history.com/svg?repos=ab-613/OpenGravity&type=Date)](https://star-history.com/#ab-613/OpenGravity&Date)
+<a href="https://www.star-history.com/?repos=ab-613%2Fopengravity&type=date&legend=top-left">
+ <picture>
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/chart?repos=ab-613/opengravity&type=date&theme=dark&legend=top-left" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/chart?repos=ab-613/opengravity&type=date&legend=top-left" />
+   <img alt="Star History Chart" src="https://api.star-history.com/chart?repos=ab-613/opengravity&type=date&legend=top-left" />
+ </picture>
+</a>
