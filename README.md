@@ -46,7 +46,7 @@ I want people to take this and make it usable for the average person. Specifical
 
 
 ### 🚀 Getting Started
-1. Serve the project root using a local server (e.g., `python3 server.py`).
+1. Serve the project root using a local server (`python3 server.py`).
 2. Open `http://localhost:8000` in your browser.
 3. Click the tiny "a" icon in the top-right corner (yeah, it's awkward—it's on the to-do list to fix!) and enter your Gemini API Key.
 4. Start chatting with Antigravity in the right panel.
