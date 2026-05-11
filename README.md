@@ -64,3 +64,8 @@ I'm balancing this with my GCSEs, so I will be reviewing and merging PRs every S
 
 ### 📜 License
 Licensed under **GPL-3.0**. See the LICENSE file for details on commercial use and contributions.
+
+
+## ⭐ Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=ab-613/OpenGravity&type=Date)](https://star-history.com/#ab-613/OpenGravity&Date)
