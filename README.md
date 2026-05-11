@@ -2,6 +2,10 @@
 
 > **The zero-install agentic workspace.**
 
+<div align="center">
+  <img src="https://github.com/ab-613/OpenGravity/blob/main/assets/logo.jpeg" alt="OpenGravity Logo" width="100">
+</div>
+
 An experimental, lightweight, BYOK (Bring Your Own Key) recreation of the Google Antigravity UI. OpenGravity provides a browser-based, reasoning-enabled IDE with a live xterm.js terminal powered by the WebContainer API. It features direct local file system sync and a proactive autonomous agent capable of orchestrating basic software engineering tasks, running shell commands, and editing files in real-time. It’s currently a work-in-progress though. It works for basic coding tasks, but consider this the "Alpha" version.
 
 Built in pure HTML/CSS/JS for maximum speed and zero installation.
@@ -19,7 +23,9 @@ Built in pure HTML/CSS/JS for maximum speed and zero installation.
 ### Autonomous Web Development
 The agent can proactively initialize projects, install dependencies using `pnpm`, and build complete applications while you watch.
 
-![HTML Site Example](https://github.com/ab-613/OpenGravity/blob/main/examples/html%20site%20example.png?raw=true)
+![HTML Site Examples](https://github.com/ab-613/OpenGravity/blob/main/assets/html%20site%20example.png?raw=true)
+
+![HTML Site Examples](https://github.com/ab-613/OpenGravity/blob/main/assets/html%20site%20example.png?raw=true)
 
 ---
 
