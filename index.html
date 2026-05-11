@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>VS Code Clone - Antigravity</title>
+
+   <!-- Official VS Code Icons -->
+   <link href="https://cdn.jsdelivr.net/npm/@vscode/codicons@0.0.35/dist/codicon.css" rel="stylesheet" crossorigin />
+
+   <!-- Global dependencies (Non-AMD) - Load before Monaco loader to avoid define() conflicts -->
+   <script type="module" crossorigin>
+      import { WebContainer } from 'https://unpkg.com/@webcontainer/api@1.1.9/dist/index.js';
+      window.WebContainer = WebContainer;
+   </script>
+   <link rel="stylesheet" href="https://unpkg.com/xterm@5.3.0/css/xterm.css" crossorigin />
+   <script src="https://unpkg.com/xterm@5.3.0/lib/xterm.js" crossorigin></script>
+   <script src="https://unpkg.com/xterm-addon-fit@0.8.0/lib/xterm-addon-fit.js" crossorigin></script>
+   <script src="https://cdn.jsdelivr.net/npm/idb-keyval@6/dist/umd.js" crossorigin></script>
+   <script src="https://unpkg.com/marked@4.3.0/marked.min.js" crossorigin></script>
+
+   <!-- Link to our stylesheet -->
+   <link rel="stylesheet" href="style.css">
+
+   <!-- Monaco Editor Loader (AMD) -->
+   <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.45.0/min/vs/loader.js" crossorigin></script>
+</head>
+
+<body class="show-file-icons">
+   <!-- The entire app will be injected here by script.js -->
+   <div id="root"></div>
+
+   <!-- Link to our JS Framework -->
+   <script src="agent.js"></script>
+   <script src="script.js" defer></script>
+</body>
+
+</html>

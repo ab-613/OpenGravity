@@ -1,0 +1,2188 @@
+/* ==========================================================================
+   VS CODE CLONE - ANTIGRAVITY EDITION
+   Complete Unified Stylesheet
+   ========================================================================== */
+
+/* --- SYSTEM VARIABLES & RESETS --- */
+:root {
+    /* Core Background Colors */
+    --bg-base: #181818;
+    /* Titlebar, Activity Bar, Status bar */
+    --bg-sidebar: #181818;
+    /* Explorer Panel */
+    --bg-editor: #1e1e1e;
+    /* Main text area & AI Panel */
+    --bg-panel: #181818;
+    /* Terminal area */
+    --bg-statusbar: #007acc;
+    /* Bottom bar active color */
+
+    /* UI Element Colors */
+    --border-divider: #2b2b2b;
+    /* The subtle lines between panels */
+    --bg-hover: #2a2d2e;
+    /* Generic hover state */
+    --bg-active-item: #37373d;
+    /* Selected file in explorer */
+    --bg-active-tab: #1e1e1e;
+    /* Active editor tab */
+    --bg-inactive-tab: #2d2d2d;
+    /* Background of tab bar */
+
+    /* Typography Colors */
+    --text-main: #cccccc;
+    --text-muted: #858585;
+    --text-active: #ffffff;
+    --text-accent: #3794ff;
+    /* Blue links */
+
+    /* Typography Rules */
+    --font-ui: "Segoe UI", "San Francisco", Inter, Roboto, Helvetica, Arial, sans-serif;
+    --font-mono: Consolas, "Fira Code", "Courier New", monospace;
+    --text-size-ui: 13px;
+    --text-size-editor: 14px;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+/* --- XTERM.JS OVERRIDES --- */
+.panel-body {
+    padding: 0 !important;
+    overflow: hidden;
+    background-color: var(--bg-panel);
+}
+
+.xterm {
+    /* Top: 10px, Right: 10px, Bottom: 10px, Left: 20px */
+    padding: 10px 10px 10px 20px;
+    height: 100%;
+}
+
+/* Force crisp text rendering */
+.xterm .xterm-screen {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* Make Xterm scrollbar match VS Code */
+.xterm-viewport::-webkit-scrollbar {
+    width: 14px;
+}
+
+.xterm-viewport::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.xterm-viewport::-webkit-scrollbar-thumb {
+    background: rgba(121, 121, 121, 0.4);
+    border: 3px solid #181818;
+    /* Creates the floating scrollbar effect */
+    border-radius: 7px;
+}
+
+.xterm-viewport::-webkit-scrollbar-thumb:hover {
+    background: rgba(100, 100, 100, 0.7);
+}
+
+.terminal-line,
+.terminal-block-cursor {
+    display: none !important;
+}
+
+/* --- UTILITIES --- */
+.codicon-modifier-spin {
+    animation: codicon-spin 1.5s linear infinite;
+    display: inline-block;
+}
+
+@keyframes codicon-spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+body {
+    background-color: var(--bg-base);
+    color: var(--text-main);
+    font-family: var(--font-ui);
+    font-size: var(--text-size-ui);
+    overflow: hidden;
+    /* user-select: none; */
+}
+
+/* Custom Dark Scrollbars to maintain the illusion */
+::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #424242;
+    border: 2px solid transparent;
+    background-clip: padding-box;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #4f4f4f;
+    border: 2px solid transparent;
+    background-clip: padding-box;
+}
+
+/* --- DIFF DECORATIONS --- */
+.diff-added-line-bg {
+    background: rgba(40, 167, 69, 0.2);
+    width: 100% !important;
+}
+
+.diff-added-line-gutter {
+    background: #28a745;
+    width: 3px !important;
+    margin-left: 1px;
+}
+
+.diff-removed-line-bg {
+    background: rgba(220, 53, 69, 0.2);
+    width: 100% !important;
+}
+
+.diff-removed-line-gutter {
+    background: #dc3545;
+    width: 3px !important;
+    margin-left: 1px;
+}
+
+/* --- MACRO LAYOUT (THE HOLY GRAIL) --- */
+#root {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    width: 100vw;
+}
+
+.main-workspace {
+    display: flex;
+    flex-grow: 1;
+    height: calc(100vh - 57px);
+    /* 100vh - 35px(title) - 22px(status) */
+}
+
+/* --- RESIZERS --- */
+.resizer {
+    background-color: transparent;
+    z-index: 100;
+    transition: background-color 0.2s;
+    position: relative;
+    flex-shrink: 0;
+}
+
+/* ```css */
+.resizer::after {
+    content: '';
+    position: absolute;
+    background-color: transparent;
+}
+
+.resizer:hover::after,
+.resizer.dragging::after {
+    background-color: #007acc;
+    transition: background-color 0.2s 0.3s;
+}
+
+.resizer.dragging::after {
+    transition-delay: 0s;
+}
+
+/* Vertical Resizer (Width) */
+.resizer-v {
+    width: 4px;
+    cursor: ew-resize;
+    margin: 0 -2px;
+    /* Pull it over the borders slightly */
+}
+
+.resizer-v:hover::after,
+.resizer-v.dragging::after {
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}
+
+/* Horizontal Resizer (Height) */
+.resizer-h {
+    height: 4px;
+    cursor: ns-resize;
+    margin: -2px 0;
+}
+
+.resizer-h:hover::after,
+.resizer-h.dragging::after {
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+}
+
+
+/* --- 1. TITLEBAR (TOP) --- */
+.titlebar {
+    height: 35px;
+    background-color: var(--bg-base);
+    flex-shrink: 0;
+    border-bottom: 1px solid var(--border-divider);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 10px;
+    font-size: 13px;
+    color: var(--text-muted);
+}
+
+.titlebar-left,
+.titlebar-center,
+.titlebar-right {
+    display: flex;
+    align-items: center;
+    height: 100%;
+}
+
+.titlebar-left {
+    gap: 4px;
+}
+
+.app-icon {
+    width: 20px;
+    height: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+    font-size: 14px;
+    color: #3794ff;
+    margin-right: 8px;
+    background: -webkit-linear-gradient(top, #3794ff, #8c8c8c);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.menubar-item {
+    padding: 4px 8px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.menubar-item:hover {
+    background-color: var(--bg-hover);
+    color: var(--text-main);
+}
+
+.titlebar-center {
+    flex-grow: 1;
+    justify-content: center;
+    color: var(--text-main);
+    font-size: 12px;
+}
+
+.title-dirty-dot {
+    margin-left: 2px;
+    color: var(--text-main);
+}
+
+.titlebar-right {
+    gap: 12px;
+}
+
+.layout-controls {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.layout-controls .codicon,
+.system-controls .codicon {
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.layout-controls .codicon:hover,
+.system-controls .codicon:hover {
+    color: var(--text-main);
+}
+
+.agent-manager-text {
+    font-size: 12px;
+    color: var(--text-main);
+    cursor: pointer;
+}
+
+.avatar-circle {
+    background-color: #5d7589;
+    color: white;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 11px;
+    margin-right: -4px;
+}
+
+.system-controls {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-left: 10px;
+}
+
+.system-controls .codicon-chrome-close:hover {
+    background-color: #e81123;
+    color: white;
+    border-radius: 4px;
+}
+
+
+/* --- 2. ACTIVITY BAR (LEFT) --- */
+.activitybar {
+    width: 50px;
+    /* Slightly wider to match the original */
+    background-color: var(--bg-base);
+    border-right: 1px solid var(--border-divider);
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+.activity-group {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    align-items: center;
+    gap: 10px;
+    /* Adds the exact spacing between icons seen in the original */
+}
+
+/* The exact rounded box from your screenshot */
+.activity-icon-container {
+    width: 30px;
+    height: 30px;
+    border-radius: 4px;
+    /* Rounded pill look */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    cursor: pointer;
+    color: var(--text-muted);
+}
+
+.activity-icon-container:hover {
+    color: var(--text-main);
+}
+
+/* The exact active state grey background, NO blue left border */
+.activity-icon-container.active {
+    color: var(--text-active);
+    background-color: #333333;
+}
+
+.activity-icon {
+    font-size: 24px;
+    /* Crisp, perfectly sized icons */
+}
+
+/* The blue badge placed exactly on the bottom-right corner of the rounded box */
+.activity-badge {
+    position: absolute;
+    bottom: -2px;
+    right: -2px;
+    background-color: #007acc;
+    /* Standard active blue */
+    color: var(--text-active);
+    font-size: 9px;
+    font-family: var(--font-ui);
+    font-weight: bold;
+    min-width: 16px;
+    height: 16px;
+    border-radius: 8px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0 4px;
+    border: 2px solid var(--bg-base);
+    /* Creates the background cutout effect perfectly */
+    z-index: 2;
+}
+
+
+/* --- 3. SIDEBAR (EXPLORER) --- */
+.sidebar {
+    width: 250px;
+    background-color: var(--bg-sidebar);
+    border-right: 1px solid var(--border-divider);
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.sidebar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    font-size: 11px;
+    color: var(--text-main);
+}
+
+.sidebar-title {
+    font-weight: 400;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+.sidebar-actions .codicon {
+    cursor: pointer;
+    font-size: 16px;
+}
+
+/* POLISH: Larger action icons */
+.sidebar-actions .codicon:hover {
+    color: var(--text-active);
+}
+
+.file-tree {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+/* --- Explorer Header & Action Icons --- */
+.tree-section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 4px 8px 4px 2px;
+    font-size: 11px;
+    font-weight: bold;
+    cursor: pointer;
+    color: var(--text-main);
+}
+
+/* Removed background-color change on hover to match request */
+
+.tree-section-title {
+    display: flex;
+    align-items: center;
+    text-transform: uppercase;
+    flex-grow: 1;
+}
+
+.tree-section-title .codicon {
+    margin-right: 2px;
+    font-size: 16px;
+}
+
+.tree-section-actions {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    opacity: 0;
+    /* Hidden by default */
+    transition: opacity 0.1s;
+}
+
+/* Show icons when hovering over the entire sidebar explorer area */
+.sidebar:hover .tree-section-actions {
+    opacity: 1;
+}
+
+.tree-section-actions .codicon {
+    padding: 4px;
+    border-radius: 4px;
+    font-size: 14px;
+    cursor: pointer;
+    color: var(--text-main);
+}
+
+.tree-section-actions .codicon:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: var(--text-active);
+}
+
+/* --- EXPLORER SELECTION & FOCUS STATES --- */
+.file-item {
+    display: flex;
+    align-items: center;
+    height: 22px;
+    padding-right: 20px;
+    cursor: pointer;
+    font-size: 13px;
+    color: var(--text-main);
+    line-height: 22px;
+    border: 1px solid transparent;
+    /* Prevents layout shifting on input */
+}
+
+.file-item:hover {
+    background-color: var(--bg-hover);
+}
+
+/* Selected state (Unfocused Explorer = Grey) */
+.file-item.selected {
+    background-color: #37373d;
+    color: var(--text-main);
+}
+
+.file-item.selected:hover {
+    background-color: #37373d;
+}
+
+/* Selected state (Focused Explorer = Blue) */
+.file-tree.focused .file-item.selected {
+    background-color: #04395e;
+    color: #ffffff;
+}
+
+.file-tree.focused .file-item.selected:hover {
+    background-color: #04395e;
+}
+
+/* Inline Input Box */
+.explorer-input-container {
+    padding: 0;
+    height: 22px;
+}
+
+.explorer-input {
+    width: calc(100% - 20px);
+    height: 20px;
+    background-color: #252526;
+    color: #cccccc;
+    border: 1px solid #007fd4;
+    outline: none;
+    font-family: var(--font-ui);
+    font-size: 13px;
+    padding: 0 4px;
+    margin-left: 2px;
+}
+
+/* --- OFFICIAL SETI FILE ICONS --- */
+@font-face {
+    font-family: 'seti';
+    /* Assumes seti.woff is in the same directory. Adjust if in a subfolder! */
+    src: url('seti.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+    font-display: block;
+}
+
+/* Base class for all file icons */
+.file-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'seti' !important;
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+    margin-right: 6px;
+    /* Optical alignment nudge - icons often sit too high */
+    position: relative;
+    top: 2px;
+}
+
+/* Ensures the icon actually renders */
+.file-icon::before {
+    display: block;
+}
+
+/* Specific Language Mappings */
+/* --- COMPREHENSIVE SETI FILE ICONS (MAIN ONES) --- */
+
+.show-file-icons .javascript-lang-file-icon.file-icon::before {
+    color: #cbcb41;
+    content: '\E051';
+}
+
+.show-file-icons .typescript-lang-file-icon.file-icon::before {
+    color: #519aba;
+    content: '\E099';
+}
+
+.show-file-icons .javascriptreact-lang-file-icon.file-icon::before,
+.show-file-icons .typescriptreact-lang-file-icon.file-icon::before {
+    color: #519aba;
+    content: '\E07D';
+}
+
+.show-file-icons .html-lang-file-icon.file-icon::before {
+    color: #e37933;
+    content: '\E048';
+}
+
+.show-file-icons .css-lang-file-icon.file-icon::before {
+    color: #519aba;
+    content: '\E01D';
+}
+
+.show-file-icons .json-lang-file-icon.file-icon::before {
+    color: #cbcb41;
+    content: '\E055';
+}
+
+.show-file-icons .python-lang-file-icon.file-icon::before {
+    color: #519aba;
+    content: '\E07B';
+}
+
+.show-file-icons .cpp-lang-file-icon.file-icon::before {
+    color: #519aba;
+    content: '\E01A';
+}
+
+.show-file-icons .c-lang-file-icon.file-icon::before {
+    color: #519aba;
+    content: '\E00C';
+}
+
+.show-file-icons .csharp-lang-file-icon.file-icon::before {
+    color: #519aba;
+    content: '\E00B';
+}
+
+.show-file-icons .java-lang-file-icon.file-icon::before {
+    color: #cc3e44;
+    content: '\E050';
+}
+
+.show-file-icons .markdown-lang-file-icon.file-icon::before {
+    color: #519aba;
+    content: '\E060';
+}
+
+.show-file-icons .php-lang-file-icon.file-icon::before {
+    color: #a074c4;
+    content: '\E070';
+}
+
+.show-file-icons .ruby-lang-file-icon.file-icon::before {
+    color: #cc3e44;
+    content: '\E081';
+}
+
+.show-file-icons .go-lang-file-icon.file-icon::before {
+    color: #519aba;
+    content: '\E03A';
+}
+
+.show-file-icons .rust-lang-file-icon.file-icon::before {
+    color: #6d8086;
+    content: '\E082';
+}
+
+.show-file-icons .sql-lang-file-icon.file-icon::before {
+    color: #f55385;
+    content: '\E022';
+}
+
+.show-file-icons .shellscript-lang-file-icon.file-icon::before {
+    color: #8dc149;
+    content: '\E089';
+}
+
+.show-file-icons .yaml-lang-file-icon.file-icon::before {
+    color: #a074c4;
+    content: '\E0A7';
+}
+
+.show-file-icons .xml-lang-file-icon.file-icon::before {
+    color: #e37933;
+    content: '\E0A5';
+}
+
+.show-file-icons .dockerfile-lang-file-icon.file-icon::before {
+    color: #519aba;
+    content: '\E025';
+}
+
+.show-file-icons .powershell-lang-file-icon.file-icon::before {
+    color: #519aba;
+    content: '\E074';
+}
+
+.show-file-icons .less-lang-file-icon.file-icon::before {
+    color: #519aba;
+    content: '\E059';
+}
+
+.show-file-icons .scss-lang-file-icon.file-icon::before,
+.show-file-icons .sass-lang-file-icon.file-icon::before {
+    color: #f55385;
+    content: '\E084';
+}
+
+.show-file-icons .vue-lang-file-icon.file-icon::before {
+    color: #8dc149;
+    content: '\E09D';
+}
+
+.show-file-icons .lua-lang-file-icon.file-icon::before {
+    color: #519aba;
+    content: '\E05E';
+}
+
+.show-file-icons .makefile-lang-file-icon.file-icon::before {
+    color: #e37933;
+    content: '\E05F';
+}
+
+.show-file-icons .ignore-lang-file-icon.file-icon::before {
+    color: #41535b;
+    content: '\E034';
+}
+
+/* Extensions and names */
+.show-file-icons .h-ext-file-icon.ext-file-icon.file-icon::before {
+    color: #a074c4;
+    content: '\E00C';
+}
+
+.show-file-icons .hpp-ext-file-icon.ext-file-icon.file-icon::before {
+    color: #a074c4;
+    content: '\E01A';
+}
+
+.show-file-icons .class-ext-file-icon.ext-file-icon.file-icon::before {
+    color: #519aba;
+    content: '\E050';
+}
+
+.show-file-icons .png-ext-file-icon.ext-file-icon.file-icon::before,
+.show-file-icons .jpg-ext-file-icon.ext-file-icon.file-icon::before,
+.show-file-icons .jpeg-ext-file-icon.ext-file-icon.file-icon::before,
+.show-file-icons .gif-ext-file-icon.ext-file-icon.file-icon::before {
+    color: #a074c4;
+    content: '\E04C';
+}
+
+.show-file-icons .svg-ext-file-icon.ext-file-icon.file-icon::before {
+    color: #a074c4;
+    content: '\E091';
+}
+
+.show-file-icons .pdf-ext-file-icon.ext-file-icon.file-icon::before {
+    color: #cc3e44;
+    content: '\E06D';
+}
+
+.show-file-icons .zip-ext-file-icon.ext-file-icon.file-icon::before {
+    color: #6d8086;
+    content: '\E0A9';
+}
+
+.show-file-icons .ico-ext-file-icon.ext-file-icon.file-icon::before {
+    color: #cbcb41;
+    content: '\E02F';
+}
+
+.show-file-icons .txt-ext-file-icon.ext-file-icon.file-icon::before {
+    color: #6d8086;
+    content: '\E023';
+}
+
+.show-file-icons .gitconfig-ext-file-icon.exrt-file-icon.file-icon::before,
+.show-file-icons .gitattributes-ext-file-icon.ext-file-icon.file-icon::before {
+    color: #41535b;
+    content: '\E034';
+}
+
+.show-file-icons .license-name-file-icon.name-file-icon.file-icon::before {
+    color: #cbcb41;
+    content: '\E05A';
+}
+
+
+/* --- 4. CENTER EDITOR STAGE --- */
+.editor-terminal-container {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    background-color: var(--bg-editor);
+    min-width: 0;
+}
+
+.editor-group {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    min-height: 0;
+}
+
+/* --- Editor Tabs --- */
+.tabs-container {
+    display: flex;
+    height: 30px;
+    background-color: rgb(24, 24, 24);
+    /* Exact VS Code behind-tabs color */
+    overflow-x: auto;
+    border-bottom: 1px solid var(--border-divider);
+}
+
+.tabs-container::-webkit-scrollbar {
+    height: 0px;
+}
+
+.tab {
+    display: flex;
+    align-items: center;
+    height: 100%;
+    padding: 0 10px 0 14px;
+    /* Perfectly balanced padding */
+    background-color: rgb(24, 24, 24);
+    /* Exact inactive tab color */
+    color: #969696;
+    /* Muted text for inactive */
+    font-size: 13px;
+    cursor: pointer;
+    border-right: 1px solid #252526;
+    /* Separator matches container background */
+    min-width: fit-content;
+    transition: background-color 0.1s;
+}
+
+.tab:hover {
+    background-color: #1f1f1f;
+}
+
+.tab.active {
+    background-color: var(--bg-editor);
+    /* Flows seamlessly into editor (#1e1e1e) */
+    color: #ffffff;
+    /* Crisp white */
+    border-top: 1px solid var(--text-accent);
+}
+
+.tab-name {
+    margin-left: 6px;
+    margin-right: 8px;
+}
+
+/* --- Monaco Editor Container --- */
+.editor-body {
+    position: relative;
+    flex-grow: 1;
+    background-color: var(--bg-editor);
+    /* Remove padding, Monaco handles its own padding */
+}
+
+#monaco-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+
+/* --- 5. TERMINAL PANEL --- */
+.panel {
+    height: 300px;
+    min-height: 100px;
+    /* Prevent it from being flattened */
+    display: flex;
+    flex-direction: column;
+    border-top: 1px solid var(--border-divider);
+    background-color: var(--bg-panel);
+    flex-shrink: 0;
+}
+
+.panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 10px 0 20px;
+    height: 35px;
+}
+
+.panel-tabs {
+    display: flex;
+    height: 100%;
+}
+
+.panel-tab {
+    display: flex;
+    align-items: center;
+    margin-right: 20px;
+    font-size: 11px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    cursor: pointer;
+    border-bottom: 1px solid transparent;
+}
+
+.panel-tab:hover {
+    color: var(--text-main);
+}
+
+.panel-tab.active {
+    color: var(--text-active);
+    border-bottom: 1px solid var(--text-active);
+}
+
+.panel-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--text-main);
+    font-size: 13px;
+}
+
+.panel-actions .codicon {
+    cursor: pointer;
+}
+
+.panel-actions .codicon:hover {
+    color: var(--text-active);
+}
+
+.terminal-dropdown {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    cursor: pointer;
+}
+
+.panel-body {
+    flex-grow: 1;
+    padding: 10px 20px;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--text-main);
+    line-height: 1.4;
+    overflow-y: auto;
+}
+
+.terminal-line {
+    margin-bottom: 2px;
+}
+
+.terminal-block-cursor {
+    display: inline-block;
+    width: 8px;
+    height: 14px;
+    border: 1px solid var(--text-muted);
+    vertical-align: middle;
+}
+
+
+/* --- 6. AGENTIC AI PANEL --- */
+.ai-panel {
+    width: 350px;
+    background-color: #181818;
+    border-left: 1px solid var(--border-divider);
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.ai-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 10px 0 20px;
+    min-height: 30px;
+    box-sizing: border-box;
+    font-size: 11px;
+    text-transform: uppercase;
+    color: var(--text-main);
+    border-bottom: 1px solid var(--border-divider);
+}
+
+
+.ai-header-actions {
+    display: flex;
+    gap: 12px;
+}
+
+.ai-header-actions .codicon {
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.ai-header-actions .codicon:hover {
+    color: var(--text-active);
+}
+
+.ai-chat-history {
+    flex-grow: 1;
+    overflow-y: auto;
+    padding: 20px 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.ai-chat-history>* {
+    flex-shrink: 0;
+}
+
+.ai-message {
+    color: var(--text-main);
+    font-size: 13px;
+    line-height: 1.5;
+    position: relative;
+}
+
+.ai-message-text p {
+    margin-bottom: 10px;
+}
+
+.ai-message-text p:last-child {
+    margin-bottom: 0;
+}
+
+.user-message {
+    font-size: 13px;
+    line-height: 1.5;
+    position: relative;
+    background-color: #242527;
+    padding: 7px;
+    border-radius: 10px;
+    margin-bottom: 10px;
+}
+
+.user-message-text p {
+    margin-bottom: 10px;
+}
+
+.user-message-text p:last-child {
+    margin-bottom: 0;
+}
+
+.undo-icon {
+    position: absolute;
+    bottom: -5px;
+    right: 0;
+    font-size: 14px;
+    color: var(--text-muted);
+    cursor: pointer;
+}
+
+.undo-icon:hover {
+    color: var(--text-main);
+}
+
+.thought-process {
+    margin-top: 8px;
+    background-color: transparent;
+    overflow: hidden;
+}
+
+.thought-header {
+    display: flex;
+    align-items: center;
+    padding: 4px 0;
+    cursor: pointer;
+    font-size: 13px;
+    color: var(--text-muted);
+}
+
+.thought-header:hover {
+    color: var(--text-main);
+}
+
+.thought-header .codicon {
+    margin-right: 8px;
+    font-size: 14px;
+}
+
+.thought-body {
+    padding: 8px 0 16px 22px;
+}
+
+.thought-title {
+    font-weight: bold;
+    color: var(--text-active);
+    margin-bottom: 8px;
+    font-size: 13px;
+}
+
+.thought-content {
+    color: var(--text-main);
+    font-size: 13px;
+    line-height: 1.6;
+    margin-bottom: 15px;
+}
+
+.thought-content .highlight {
+    color: var(--text-active);
+    font-weight: bold;
+}
+
+.thought-content .accent {
+    color: #d7ba7d;
+}
+
+.thought-content .stats {
+    color: var(--text-muted);
+}
+
+.ai-status-text {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 2px 0;
+    font-size: 13px;
+    color: var(--text-main);
+}
+
+.ai-status-text .codicon {
+    font-size: 14px;
+    color: var(--text-muted);
+}
+
+.ai-status-text .codicon.spin {
+    animation: codicon-spin 1s steps(8) infinite;
+}
+
+@keyframes codicon-spin {
+    to { transform: rotate(360deg); }
+}
+
+.progress-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+    text-transform: uppercase;
+}
+
+.progress-header span:last-child {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+}
+
+.progress-header span:last-child:hover {
+    color: var(--text-main);
+}
+
+.progress-header .codicon {
+    margin-left: 4px;
+    font-size: 12px;
+}
+
+.progress-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.progress-item {
+    display: flex;
+    align-items: flex-start;
+    font-size: 12px;
+    color: var(--text-main);
+}
+
+.progress-item-number {
+    color: var(--text-muted);
+    width: 15px;
+    flex-shrink: 0;
+    text-align: left;
+    font-family: var(--font-mono);
+}
+
+.progress-item-text {
+    font-weight: bold;
+}
+
+.feedback-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 15px;
+    color: var(--text-muted);
+    font-size: 12px;
+}
+
+.feedback-actions span {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+}
+
+.feedback-actions span:hover {
+    color: var(--text-main);
+}
+
+.feedback-actions .codicon {
+    margin-left: 4px;
+    font-size: 14px;
+}
+
+.ai-input-area {
+    padding: 15px;
+    border-top: 1px solid var(--border-divider);
+}
+
+.toolbar-top {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 10px;
+    color: var(--text-muted);
+}
+
+.toolbar-top .codicon {
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.toolbar-top .codicon:hover {
+    color: var(--text-main);
+}
+
+.input-box {
+    background-color: var(--bg-active-tab);
+    border: 1px solid var(--border-divider);
+    border-radius: 6px;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+}
+
+.input-box:focus-within {
+    border-color: var(--text-muted);
+}
+
+.input-text {
+    width: 100%;
+    background: transparent;
+    border: none;
+    color: var(--text-main);
+    font-family: var(--font-ui);
+    font-size: 13px;
+    resize: none;
+    outline: none;
+    height: 40px;
+}
+
+.input-text::placeholder {
+    color: var(--text-muted);
+}
+
+.toolbar-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 8px;
+    color: var(--text-muted);
+    font-size: 11px;
+}
+
+.toolbar-left,
+.toolbar-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.toolbar-left span {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+}
+
+.toolbar-left span:hover {
+    color: var(--text-main);
+}
+
+.toolbar-left .codicon {
+    margin-right: 4px;
+    font-size: 12px;
+}
+
+.toolbar-right .codicon {
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.toolbar-right .codicon-arrow-right {
+    background-color: #333;
+    border-radius: 50%;
+    padding: 2px;
+    font-size: 14px;
+}
+
+.toolbar-right .codicon-arrow-right:hover {
+    background-color: #555;
+    color: white;
+}
+
+
+/* --- 7. STATUS BAR (BOTTOM) --- */
+.statusbar {
+    height: 22px;
+    background-color: var(--bg-base);
+    border-top: 1px solid var(--border-divider);
+    flex-shrink: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12px;
+    color: var(--text-main);
+    font-family: var(--font-ui);
+}
+
+.statusbar-left,
+.statusbar-right {
+    display: flex;
+    align-items: center;
+    height: 100%;
+}
+
+.statusbar-item {
+    display: flex;
+    align-items: center;
+    padding: 0 8px;
+    height: 100%;
+    cursor: pointer;
+    gap: 4px;
+}
+
+.statusbar-item:hover {
+    background-color: var(--bg-hover);
+}
+
+.statusbar-item .codicon {
+    font-size: 14px;
+}
+
+.statusbar-remote {
+    background-color: #007acc;
+    color: white;
+    padding: 0 12px;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.statusbar-remote:hover {
+    background-color: #1f8ad2;
+}
+
+.statusbar-remote .codicon {
+    font-size: 14px;
+}
+
+.status-error {
+    color: #f14c4c;
+    display: flex;
+    align-items: center;
+    gap: 2px;
+}
+
+.status-warning {
+    color: #cca700;
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    margin-left: 4px;
+}
+
+/* --- Interactive Tab Actions (Close & Dirty Indicator) --- */
+.tab-actions {
+    position: relative;
+    width: 22px;
+    height: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: 4px;
+}
+
+.tab .codicon-close {
+    font-size: 13px;
+    padding: 3px;
+    border-radius: 4px;
+    opacity: 0;
+    position: absolute;
+    z-index: 2;
+    transition: opacity 0.1s, background-color 0.1s;
+    pointer-events: auto;
+}
+
+.tab .tab-dirty-dot {
+    width: 8px;
+    height: 8px;
+    background-color: #ffffff;
+    border-radius: 50%;
+    position: absolute;
+    z-index: 1;
+    transition: opacity 0.1s;
+}
+
+/* Default Behavior: Show close button on hover/active if not dirty */
+.tab:not(.dirty):hover .codicon-close,
+.tab:not(.dirty).active .codicon-close {
+    opacity: 1;
+}
+
+/* Dirty State: Hide close button, show dot */
+.tab.dirty .codicon-close {
+    opacity: 0;
+}
+
+.tab.dirty .tab-dirty-dot {
+    opacity: 1;
+}
+
+/* Hovering the action area when dirty: Swap dot for cross */
+.tab.dirty .tab-actions:hover .codicon-close {
+    opacity: 1;
+    background-color: rgba(255, 255, 255, 0.15);
+}
+
+.tab.dirty .tab-actions:hover .tab-dirty-dot {
+    opacity: 0;
+}
+
+/* Individual Close Button Hover */
+
+/* ==========================================================================
+   PHASE 6: PIXEL-PERFECT AGENT AI PANEL 
+   ========================================================================== */
+
+/* --- Edited File Pills --- */
+.ai-edited-file {
+    display: flex;
+    align-items: center;
+    padding: 6px 0;
+    font-size: 13px;
+    color: var(--text-main);
+}
+
+.ai-edited-file .codicon-file {
+    color: var(--text-muted);
+    font-size: 14px;
+    margin-right: 8px;
+}
+
+.ai-edited-file .file-icon {
+    margin-right: 4px;
+    width: 16px;
+    height: 16px;
+    font-size: 14px;
+}
+
+.ai-edited-file strong {
+    font-weight: 600;
+    color: var(--text-active);
+    margin-right: 8px;
+}
+
+.ai-edited-file .diff-add {
+    color: #89d185;
+    margin-right: 4px;
+    font-size: 12px;
+}
+
+.ai-edited-file .diff-remove {
+    color: #f14c4c;
+    font-size: 12px;
+}
+
+.ai-edited-file .spacer {
+    flex-grow: 1;
+}
+
+.ai-edited-file .codicon-go-to-file {
+    color: var(--text-muted);
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.ai-edited-file .codicon-go-to-file:hover {
+    color: var(--text-main);
+}
+
+/* --- Command Terminal Block --- */
+.ai-cmd-block {
+    background-color: #141414;
+    /* Slightly darker than panel background */
+    border: 1px solid var(--border-divider);
+    border-radius: 4px;
+    margin: 15px 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.ai-cmd-header,
+.ai-cmd-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 12px;
+    font-size: 11px;
+    color: var(--text-muted);
+}
+
+.ai-cmd-header {
+    border-bottom: 1px solid var(--border-divider);
+}
+
+.ai-cmd-footer {
+    border-top: 1px solid var(--border-divider);
+}
+
+.ai-cmd-header span:last-child {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.ai-cmd-header span:last-child:hover {
+    color: var(--text-main);
+}
+
+.ai-cmd-header .codicon {
+    font-size: 12px;
+}
+
+.ai-cmd-body {
+    padding: 10px 12px;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    line-height: 1.5;
+    position: relative;
+    overflow-x: hidden;
+}
+
+.ai-cmd-line {
+    display: flex;
+    justify-content: space-between;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+}
+
+.ai-cmd-line .codicon-copy {
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.ai-cmd-line .codicon-copy:hover {
+    color: var(--text-main);
+}
+
+/* Terminal Syntax Highlighting matching screenshot */
+.term-text {
+    color: var(--text-main);
+}
+
+.term-path {
+    color: #cccccc;
+}
+
+.term-cmd {
+    color: #dcdcaa;
+}
+
+/* Yellowish */
+.term-string {
+    color: #4fc1ff;
+}
+
+/* Cyan */
+.term-err {
+    color: #f14c4c;
+}
+
+/* Red */
+
+/* The mini-map scrollbar indicator on the right of the terminal */
+.term-scroll-track {
+    position: absolute;
+    right: 2px;
+    top: 10px;
+    bottom: 10px;
+    width: 4px;
+    display: flex;
+    flex-direction: column;
+}
+
+.scroll-mark {
+    width: 100%;
+    height: 4px;
+    margin-bottom: 2px;
+}
+
+.scroll-mark.red {
+    background-color: #f14c4c;
+}
+
+.scroll-mark.blue {
+    background-color: #4fc1ff;
+}
+
+/* --- Markdown Rendering Elements --- */
+.ai-status-text {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: var(--text-main);
+    margin-bottom: 15px;
+}
+
+.ai-status-text .codicon {
+    font-size: 14px;
+    color: var(--text-muted);
+}
+
+.ai-markdown p {
+    margin: 8px 0;
+    font-size: 13.5px;
+    line-height: 1.6;
+    color: #cccccc;
+}
+
+.ai-markdown h1,
+.ai-markdown h2,
+.ai-markdown h3 {
+    font-weight: 600;
+    color: #d4d4d4;
+    margin: 20px 0 10px 0;
+}
+
+.ai-markdown h1 {
+    font-size: 1.6rem;
+}
+
+.ai-markdown h2 {
+    font-size: 1.4rem;
+}
+
+.ai-markdown h3 {
+    font-size: 1.2rem;
+}
+
+.ai-markdown ul,
+.ai-markdown ol {
+    padding-left: 20px;
+    margin: 12px 0;
+}
+
+.ai-markdown li {
+    margin-bottom: 6px;
+    font-size: 13.5px;
+    color: #cccccc;
+}
+
+.ai-markdown strong {
+    color: #ffffff;
+    font-weight: 600;
+}
+
+.ai-markdown code {
+    background-color: #2b2d2e;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: #cccccc;
+}
+
+.ai-markdown pre {
+    background-color: #141414;
+    border: 1px solid #2b2b2b;
+    border-radius: 8px;
+    margin: 16px 0;
+    overflow: hidden;
+    position: relative;
+    padding-top: 30px;
+}
+
+/* Code block header */
+.ai-markdown pre::before {
+    content: 'javascript';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 15px;
+    background-color: #1a1a1a;
+    border-bottom: 1px solid #2b2b2b;
+    color: #858585;
+    padding: 6px 12px;
+    font-size: 11px;
+}
+
+.ai-markdown pre code {
+    background-color: transparent;
+    padding: 12px;
+    color: #d4d4d4;
+    display: block;
+    line-height: 1.5;
+}
+
+.ai-markdown blockquote {
+    background-color: #202020;
+    border-left: 4px solid #404040;
+    padding: 12px 16px;
+    margin: 16px 0;
+    border-radius: 0 4px 4px 0;
+}
+
+.ai-markdown blockquote p {
+    margin: 0;
+    color: #aaaaaa;
+    font-style: normal;
+}
+
+.ai-markdown a {
+    color: #4fc1ff;
+    text-decoration: none;
+}
+
+.ai-markdown a:hover {
+    text-decoration: underline;
+}
+
+.ai-markdown hr {
+    border: none;
+    border-top: 1px solid #2b2b2b;
+    margin: 20px 0;
+}
+
+/* File Pills in AI Response */
+.ai-edited-file {
+    display: flex;
+    align-items: center;
+    padding: 6px 0;
+    font-size: 13px;
+    color: var(--text-main);
+}
+
+.ai-edited-file .codicon-file {
+    color: var(--text-muted);
+    font-size: 14px;
+    margin-right: 8px;
+}
+
+.ai-edited-file .file-icon {
+    margin-right: 4px;
+    width: 16px;
+    height: 16px;
+    font-size: 14px;
+    /* Nudge down to align with surrounding text baseline */
+    position: relative;
+    top: 2px;
+}
+
+.ai-edited-file strong {
+    font-weight: 600;
+    color: var(--text-active);
+    margin-right: 8px;
+}
+
+.ai-edited-file .diff-add {
+    color: #89d185;
+    margin-right: 4px;
+    font-size: 12px;
+}
+
+.ai-edited-file .diff-remove {
+    color: #f14c4c;
+    font-size: 12px;
+}
+
+.ai-edited-file .spacer {
+    flex-grow: 1;
+}
+
+.ai-edited-file .codicon-go-to-file {
+    color: var(--text-muted);
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.ai-edited-file .codicon-go-to-file:hover {
+    color: var(--text-main);
+}
+
+/* --- Command Terminal Block --- */
+.ai-cmd-block {
+    background-color: #141414;
+    border: 1px solid var(--border-divider);
+    border-radius: 4px;
+    margin: 15px 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.ai-cmd-header,
+.ai-cmd-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 12px;
+    font-size: 11px;
+    color: var(--text-muted);
+}
+
+.ai-cmd-header {
+    border-bottom: 1px solid var(--border-divider);
+}
+
+.ai-cmd-footer {
+    border-top: 1px solid var(--border-divider);
+}
+
+.ai-cmd-header span:last-child {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.ai-cmd-header span:last-child:hover {
+    color: var(--text-main);
+}
+
+.ai-cmd-header .codicon {
+    font-size: 12px;
+}
+
+.ai-cmd-body {
+    padding: 10px 12px;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    line-height: 1.5;
+    position: relative;
+    overflow-x: hidden;
+}
+
+.ai-cmd-line {
+    display: flex;
+    justify-content: space-between;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+}
+
+.ai-cmd-line .codicon-copy {
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.ai-cmd-line .codicon-copy:hover {
+    color: var(--text-main);
+}
+
+/* Terminal Syntax Highlighting matching screenshot */
+.term-text {
+    color: var(--text-main);
+}
+
+.term-path {
+    color: #cccccc;
+}
+
+.term-cmd {
+    color: #dcdcaa;
+}
+
+.term-string {
+    color: #4fc1ff;
+}
+
+.term-err {
+    color: #f14c4c;
+}
+
+.term-scroll-track {
+    position: absolute;
+    right: 2px;
+    top: 10px;
+    bottom: 10px;
+    width: 4px;
+    display: flex;
+    flex-direction: column;
+}
+
+.scroll-mark {
+    width: 100%;
+    height: 4px;
+    margin-bottom: 2px;
+}
+
+.scroll-mark.red {
+    background-color: #f14c4c;
+}
+
+.scroll-mark.blue {
+    background-color: #4fc1ff;
+}
+
+.ai-status-text {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: var(--text-main);
+    margin-bottom: 15px;
+}
+
+.ai-status-text .codicon {
+    font-size: 14px;
+    color: var(--text-muted);
+}
+
+.ai-markdown .file-icon {
+    display: inline-flex;
+    width: 14px;
+    height: 14px;
+    font-size: 14px;
+    margin-right: 4px;
+    vertical-align: middle;
+    position: relative;
+    top: 3px;
+    /* Extra nudge for text baseline equality */
+}
+
+.ai-markdown li strong {
+    color: var(--text-active);
+    font-weight: 600;
+    margin-right: 4px;
+}
+
+.ai-markdown li i {
+    color: var(--text-muted);
+    font-style: italic;
+}
+
+
+
+/* --- Bottom Action Bar --- */
+.ai-action-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 10px;
+    font-size: 12px;
+    color: var(--text-muted);
+}
+
+.ai-action-left {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+}
+
+.ai-action-left:hover {
+    color: var(--text-main);
+}
+
+.ai-action-left .codicon {
+    font-size: 14px;
+}
+
+.ai-action-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.ai-action-right .reject-text {
+    cursor: pointer;
+}
+
+.ai-action-right .reject-text:hover {
+    color: var(--text-main);
+}
+
+.accept-btn {
+    background-color: #007fd4;
+    color: #ffffff;
+    border: none;
+    border-radius: 2px;
+    padding: 4px 12px;
+    font-size: 12px;
+    font-family: var(--font-ui);
+    cursor: pointer;
+    font-weight: 500;
+}
+
+.accept-btn:hover {
+    background-color: #006eb5;
+}
+
+.ai-action-right .codicon-chevron-up {
+    cursor: pointer;
+    font-size: 16px;
+    margin-left: -4px;
+}
+
+.ai-action-right .codicon-chevron-up:hover {
+    color: var(--text-main);
+}
+
+/* Overriding the input area slightly to match new image */
+.ai-input-area {
+    padding: 10px 15px 15px 15px;
+    border-top: none;
+}
+
+.input-box {
+    background-color: #181818;
+    border: 1px solid #333;
+}
+
+.input-text {
+    height: 36px;
+    padding: 0;
+}
+/* --- SETTINGS MODAL --- */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+    animation: modalFadeIn 0.2s ease-out;
+}
+
+.modal-container {
+    width: 450px;
+    background-color: #1e1e1e;
+    border: 1px solid var(--border-divider);
+    border-radius: 8px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    animation: modalSlideUp 0.2s ease-out;
+}
+
+.modal-header {
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border-divider);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-header h3 {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-active);
+    margin: 0;
+}
+
+.modal-close {
+    cursor: pointer;
+    font-size: 18px;
+    color: var(--text-muted);
+}
+
+.modal-close:hover {
+    color: var(--text-active);
+}
+
+.modal-body {
+    padding: 24px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.settings-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.settings-group label {
+    font-size: 12px;
+    color: var(--text-main);
+    font-weight: 500;
+}
+
+.settings-input {
+    background-color: #3c3c3c;
+    border: 1px solid transparent;
+    border-radius: 2px;
+    color: #cccccc;
+    padding: 8px 12px;
+    outline: none;
+    font-family: var(--font-ui);
+    font-size: 13px;
+    width: 100%;
+}
+
+.settings-input:focus {
+    border-color: #007acc;
+}
+
+.modal-footer {
+    padding: 16px 20px;
+    border-top: 1px solid var(--border-divider);
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+}
+
+.secondary-btn {
+    background-color: #3a3d41;
+    color: #ffffff;
+    border: none;
+    border-radius: 2px;
+    padding: 6px 16px;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+.secondary-btn:hover {
+    background-color: #45494e;
+}
+
+@keyframes modalFadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes modalSlideUp {
+    from { transform: translateY(20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
