@@ -52,7 +52,7 @@ I want people to take this and make it usable for the average person. Specifical
 4. Start chatting with Antigravity in the right panel.
 
 ### 🛠️ Status: On Hiatus
-I am on hiatus for GCSE exams. I am looking for people to actively maintain and evolve this repo. Don't just fork it—submit PRs and let's make this the definitive open-source Antigravity alternative. If you make a significant contribution, I'm happy to add you as a maintainer.
+I'm balancing this with my GCSEs, so I will be reviewing and merging PRs every Sunday evening.
 
 ### 📜 License
 Licensed under **GPL-3.0**. See the LICENSE file for details on commercial use and contributions.
