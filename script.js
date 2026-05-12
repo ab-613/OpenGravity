@@ -1125,50 +1125,31 @@ function renderActivityBar() {
 }
 
 function renderSettingsModal() {
-    const config = {
-        apiKey: localStorage.getItem('gemini_api_key') || '',
-        projectId: localStorage.getItem('gcp_project_id') || '',
-        region: localStorage.getItem('gcp_region') || 'us-central1'
-    };
-
-    const apiKeyInput = el('input', { class: 'settings-input', type: 'password', value: config.apiKey, placeholder: 'Enter Gemini API Key' });
-    const projectIdInput = el('input', { class: 'settings-input', value: config.projectId, placeholder: 'your-project-id' });
-    const regionInput = el('input', { class: 'settings-input', value: config.region, placeholder: 'us-central1' });
+    const apiKeyInput = el('input', { class: 'settings-input', type: 'password', value: localStorage.getItem('gemini_api_key') || '', placeholder: 'AIza...' });
 
     const modal = el('div', { class: 'modal-overlay', onclick: (e) => { if (e.target.className === 'modal-overlay') { appState.isSettingsModalOpen = false; updateUI(); } } }, [
         el('div', { class: 'modal-container' }, [
             el('div', { class: 'modal-header' }, [
-                el('h3', {}, 'Vertex AI Settings'),
+                el('h3', {}, 'Gemini API Settings'),
                 el('i', { class: 'codicon codicon-close modal-close', onclick: () => { appState.isSettingsModalOpen = false; updateUI(); } })
             ]),
             el('div', { class: 'modal-body' }, [
                 el('div', { class: 'settings-group' }, [
-                    el('label', {}, 'Vertex AI / Google Cloud API Key'),
+                    el('label', {}, 'Gemini API Key'),
                     apiKeyInput,
-                    el('div', { style: 'font-size: 10px; color: var(--text-muted); margin-top: 4px;' }, 'Using the global aiplatform.googleapis.com endpoint.')
-                ]),
-                el('div', { class: 'settings-group' }, [
-                    el('label', {}, 'GCP Project ID (Required for specific models/regions)'),
-                    projectIdInput,
-                    el('div', { style: 'font-size: 10px; color: var(--text-muted); margin-top: 4px;' }, 'Used only if you switch to region-specific models.')
+                    el('div', { style: 'font-size: 10px; color: var(--text-muted); margin-top: 4px;' }, [
+                        'Get a free key at ',
+                        el('a', { href: 'https://aistudio.google.com/apikey', target: '_blank', style: 'color: var(--accent);' }, 'aistudio.google.com/apikey'),
+                        '. Stored only in your browser\'s localStorage.'
+                    ])
                 ])
             ]),
             el('div', { class: 'modal-footer' }, [
                 el('button', { class: 'secondary-btn', onclick: () => { appState.isSettingsModalOpen = false; updateUI(); } }, 'Cancel'),
                 el('button', { class: 'accept-btn', onclick: () => {
                     const nk = apiKeyInput.value.trim();
-                    const np = projectIdInput.value.trim();
-                    const nr = regionInput.value.trim();
                     localStorage.setItem('gemini_api_key', nk);
-                    localStorage.setItem('gcp_project_id', np);
-                    localStorage.setItem('gcp_region', nr);
-                    
-                    if (window.AgentManager) {
-                        AgentManager.apiKey = nk;
-                        AgentManager.projectId = np;
-                        AgentManager.region = nr;
-                    }
-
+                    if (window.AgentManager) AgentManager.apiKey = nk;
                     appState.isSettingsModalOpen = false;
                     updateUI();
                 }}, 'Save Settings')
