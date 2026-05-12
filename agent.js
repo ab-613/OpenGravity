@@ -7,7 +7,7 @@
 
 const AgentManager = {
     apiKey: localStorage.getItem('gemini_api_key'),
-    model: 'gemini-2.5-pro-preview-05-06', // Change this to swap models
+    model: 'gemini-gemini-3.1-pro-preview', // User requested specific model
     internalHistory: [],
 
     ensureApiKey() {
