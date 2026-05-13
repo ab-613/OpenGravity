@@ -1,11 +1,12 @@
 /* ==========================================================================
    INTERACTIVE AGENT MANAGER (GEMINI API)
+   Uses the Gemini Developer API (generativelanguage.googleapis.com).
+   Authentication: API Key (BYOK — stored in localStorage).
+   To change the model, update the `model` field below.
    ========================================================================== */
 
 const AgentManager = {
     apiKey: localStorage.getItem('gemini_api_key'),
-    projectId: localStorage.getItem('gcp_project_id'),
-    region: localStorage.getItem('gcp_region') || 'us-central1',
     model: 'gemini-3.1-pro-preview', // User requested specific model
     internalHistory: [],
 
@@ -81,10 +82,13 @@ Use this EXACT sequence of commands:
         while (iterations > 0) {
             iterations--;
             try {
-                // NEW: Show that the agent is actually working/thinking
+                // Show that the agent is working/thinking
                 uiCallback(`[tool_use: thinking {}]`, true, true);
 
-                const url = `https://aiplatform.googleapis.com/v1/publishers/google/models/${this.model}:streamGenerateContent?key=${this.apiKey}`;
+                // Gemini Developer API — authenticates with a plain API key.
+                // NOTE: Do NOT use aiplatform.googleapis.com here; that endpoint
+                // requires OAuth2 / service-account credentials, not an API key.
+                const url = `https://generativelanguage.googleapis.com/v1beta/models/${this.model}:generateContent?key=${this.apiKey}`;
 
                 const response = await fetch(url, {
                     method: 'POST',
@@ -95,25 +99,25 @@ Use this EXACT sequence of commands:
                         tools: this.getTools(),
                         generationConfig: {
                             thinkingConfig: {
-                                includeThoughts: true
+                                includeThoughts: true,
+                                thinkingBudget: -1  // -1 = dynamic (model decides)
                             }
                         }
                     })
                 });
 
                 const responseText = await response.text();
-                // Vertex AI streamGenerateContent returns an array of JSON objects [ {...}, {...} ]
+                // generateContent returns a single JSON object; wrap it in an array
+                // so the aggregation loop below works uniformly.
                 let dataArray;
                 try {
-                    // For a fetch that wasn't actually streamed via reader, it often returns a single JSON array
-                    dataArray = JSON.parse(responseText);
+                    const parsed = JSON.parse(responseText);
+                    // Surface API-level errors (e.g. invalid key, quota exceeded)
+                    if (parsed.error) throw new Error(`Gemini API Error: ${parsed.error.message}`);
+                    dataArray = Array.isArray(parsed) ? parsed : [parsed];
                 } catch (e) {
-                    throw new Error("Failed to parse Vertex responses. Make sure the API key and model are correct.");
-                }
-
-                if (!Array.isArray(dataArray)) {
-                    if (dataArray.error) throw new Error(dataArray.error.message);
-                    dataArray = [dataArray]; // Wrap if it's a single object
+                    if (e.message.startsWith('Gemini API Error:')) throw e;
+                    throw new Error("Failed to parse Gemini API response. Check your API key and model name.");
                 }
 
                 // Aggregate content and thoughts from all parts of the stream
